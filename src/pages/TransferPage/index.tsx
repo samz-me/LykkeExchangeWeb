@@ -54,7 +54,7 @@ export class TransferPage extends React.Component<TransferPageProps> {
                     newTransfer.asset,
                     newTransfer.from.balances.find(
                       b => b.assetId === newTransfer.asset.id
-                    )!.balance
+                    )!.availableBalance
                   )}{' '}
                   {newTransfer.asset.name}
                 </span>
