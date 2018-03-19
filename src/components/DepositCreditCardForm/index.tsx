@@ -9,14 +9,15 @@ import {
 } from 'formik';
 import {inject, observer} from 'mobx-react';
 import * as React from 'react';
+import {FormattedNumber} from 'react-intl';
 import {Link} from 'react-router-dom';
 import {RootStoreProps} from '../../App';
 import {ROUTE_WALLETS} from '../../constants/routes';
 import {STORE_ROOT} from '../../constants/stores';
 import {AssetModel, DepositCreditCardModel} from '../../models';
+import {roundMoney} from '../../utils';
 import {AmountInput} from '../AmountInput';
 import {FormSelect} from '../FormSelect';
-import {NumberFormat} from '../NumberFormat';
 
 import './style.css';
 
@@ -39,14 +40,40 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
   } = rootStore!;
   const countryOptions = countries.map(c => ({
     label: c.name,
-    value: c.id
+    value: c.iso2
   }));
 
   return (
     <Formik
       initialValues={deposit}
       // tslint:disable-next-line:jsx-no-lambda
-      validate={() => ({})}
+      validate={(values: DepositCreditCardModel) => {
+        const errors = {} as any;
+
+        if (!values.address) {
+          errors.address = 'Field Address should not be empty';
+        }
+        if (!values.amount) {
+          errors.amount = 'Field Amount should not be empty';
+        }
+        if (!values.city) {
+          errors.city = 'Field City should not be empty';
+        }
+        if (!values.country) {
+          errors.country = 'Field Country should not be empty';
+        }
+        if (!values.firstName) {
+          errors.firstName = 'Field First Name should not be empty';
+        }
+        if (!values.lastName) {
+          errors.lastName = 'Field Last Name should not be empty';
+        }
+        if (!values.zip) {
+          errors.zip = 'Field ZIP should not be empty';
+        }
+
+        return errors;
+      }}
       // tslint:disable-next-line:jsx-no-lambda
       onSubmit={async (
         values: DepositCreditCardModel,
@@ -65,9 +92,14 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
           onSuccess(failUrl, okUrl, paymentUrl);
         } catch (err) {
           if (err.field) {
-            setErrors({[err.field]: err.message});
+            const errMessage = err.message.replace(asset.id, asset.name);
+            setErrors({[err.field]: errMessage});
+            (document.querySelector(
+              `[name="${err.field}"]`
+            ) as HTMLInputElement).focus();
+          } else {
+            setStatus(err.message);
           }
-          setStatus(err.message);
           setSubmitting(false);
         }
       }}
@@ -95,7 +127,12 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                       <div className="input-group-addon addon-text">
                         {asset && asset.name}
                       </div>
-                      {AmountInput(field.onChange, field.value, field.name)}
+                      {AmountInput(
+                        field.onChange,
+                        field.value,
+                        field.name,
+                        asset && asset.accuracy
+                      )}
                       {form.errors[field.name] && (
                         <span className="help-block">
                           {form.errors[field.name]}
@@ -104,8 +141,12 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                       {!!bankCardsFeeSizePercentage && (
                         <div className="fee-label">
                           Fee: {asset && asset.name}{' '}
-                          <NumberFormat
-                            value={field.value * bankCardsFeeSizePercentage}
+                          <FormattedNumber
+                            value={roundMoney(
+                              field.value * bankCardsFeeSizePercentage
+                            )}
+                            style="decimal"
+                            maximumFractionDigits={asset && asset.accuracy}
                           />
                         </div>
                       )}
@@ -301,6 +342,7 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                       type="tel"
                       {...field}
                       className="form-control"
+                      disabled={true}
                     />
                     {form.errors[field.name] && (
                       <span className="help-block">
@@ -330,6 +372,7 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                       type="email"
                       {...field}
                       className="form-control"
+                      disabled={true}
                     />
                     {form.errors[field.name] && (
                       <span className="help-block">
@@ -358,7 +401,7 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
               type="submit"
               value="Cash In"
               className="btn btn--primary"
-              disabled={formikBag.isSubmitting}
+              disabled={formikBag.isSubmitting || !formikBag.isValid}
             />
             {!!formikBag.status && (
               <div className="help-block">{formikBag.status}</div>

@@ -1,9 +1,8 @@
 import {action, computed, observable} from 'mobx';
-import {
-  ROUTE_DEPOSIT_CREDIT_CARD_FAIL,
-  ROUTE_DEPOSIT_CREDIT_CARD_SUCCESS
-} from '../constants/routes';
+import {ROUTE_GATEWAY_FAIL, ROUTE_GATEWAY_SUCCESS} from '../constants/routes';
 import {AssetModel, WalletModel} from './';
+
+export const DEFAULT_DEPOSIT_OPTION = 'BankCard';
 
 export class DepositCreditCardModel {
   @observable address: string = '';
@@ -41,7 +40,6 @@ export class DepositCreditCardModel {
 
   @computed
   get asJson() {
-    // TODO: do it differently to redirect finally
     const url = `${location.protocol}//${location.host}`;
 
     return {
@@ -50,12 +48,12 @@ export class DepositCreditCardModel {
       AssetId: this.asset && this.asset.id,
       City: this.city,
       Country: this.country,
-      DepositOption: this.depositOption,
+      DepositOption: this.depositOption || DEFAULT_DEPOSIT_OPTION,
       Email: this.email,
-      FailUrl: url + ROUTE_DEPOSIT_CREDIT_CARD_FAIL,
+      FailUrl: url + ROUTE_GATEWAY_FAIL,
       FirstName: this.firstName,
       LastName: this.lastName,
-      OkUrl: url + ROUTE_DEPOSIT_CREDIT_CARD_SUCCESS,
+      OkUrl: url + ROUTE_GATEWAY_SUCCESS,
       Phone: this.phone,
       WalletId: this.wallet && this.wallet.id,
       Zip: this.zip

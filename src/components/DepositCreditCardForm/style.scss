@@ -27,11 +27,24 @@
   }
 
   .has-error {
+    .form-control {
+      border-color: $gray-25;
+      border-left: 2px solid $red;
+
+      &:focus {
+        border-color: $gray-25;
+        border-left: 2px solid $red;
+      }
+    }
     .help-block {
       color: $red;
     }
     .control-label {
       color: $secondary;
+    }
+    .input-group-addon {
+      background-color: inherit;
+      color: inherit;
     }
   }
 
