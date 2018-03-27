@@ -11,10 +11,11 @@ import {inject, observer} from 'mobx-react';
 import * as React from 'react';
 import {FormattedNumber} from 'react-intl';
 import {Link} from 'react-router-dom';
+import Yup from 'yup';
 import {RootStoreProps} from '../../App';
 import {ROUTE_WALLETS} from '../../constants/routes';
 import {STORE_ROOT} from '../../constants/stores';
-import {AssetModel, DepositCreditCardModel} from '../../models';
+import {AssetModel, DepositCreditCardModel, GatewayUrls} from '../../models';
 import {roundMoney} from '../../utils';
 import {AmountInput} from '../AmountInput';
 import {FormSelect} from '../FormSelect';
@@ -23,7 +24,7 @@ import './style.css';
 
 export interface DepositCreditCardFormProps extends RootStoreProps {
   asset: AssetModel;
-  onSuccess: (failUrl: string, okUrl: string, paymentUrl: string) => void;
+  onSuccess: (gatewayUrls: GatewayUrls) => void;
 }
 
 export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
@@ -42,38 +43,21 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
     label: c.name,
     value: c.iso2
   }));
+  const requiredErrorMessage = (fieldName: string) =>
+    `Field ${fieldName} should not be empty`;
 
   return (
     <Formik
       initialValues={deposit}
-      // tslint:disable-next-line:jsx-no-lambda
-      validate={(values: DepositCreditCardModel) => {
-        const errors = {} as any;
-
-        if (!values.address) {
-          errors.address = 'Field Address should not be empty';
-        }
-        if (!values.amount) {
-          errors.amount = 'Field Amount should not be empty';
-        }
-        if (!values.city) {
-          errors.city = 'Field City should not be empty';
-        }
-        if (!values.country) {
-          errors.country = 'Field Country should not be empty';
-        }
-        if (!values.firstName) {
-          errors.firstName = 'Field First Name should not be empty';
-        }
-        if (!values.lastName) {
-          errors.lastName = 'Field Last Name should not be empty';
-        }
-        if (!values.zip) {
-          errors.zip = 'Field ZIP should not be empty';
-        }
-
-        return errors;
-      }}
+      validationSchema={Yup.object().shape({
+        address: Yup.string().required(requiredErrorMessage('Address')),
+        amount: Yup.number().required(requiredErrorMessage('Amount')),
+        city: Yup.string().required(requiredErrorMessage('City')),
+        country: Yup.string().required(requiredErrorMessage('Country')),
+        firstName: Yup.string().required(requiredErrorMessage('First Name')),
+        lastName: Yup.string().required(requiredErrorMessage('Last Name')),
+        zip: Yup.string().required(requiredErrorMessage('Zip'))
+      })}
       // tslint:disable-next-line:jsx-no-lambda
       onSubmit={async (
         values: DepositCreditCardModel,
@@ -86,10 +70,8 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
         setStatus(null);
         deposit.update(values);
         try {
-          const {failUrl, okUrl, paymentUrl} = await fetchBankCardPaymentUrl(
-            deposit
-          );
-          onSuccess(failUrl, okUrl, paymentUrl);
+          const gatewayUrls = await fetchBankCardPaymentUrl(deposit);
+          onSuccess(gatewayUrls);
         } catch (err) {
           if (err.field) {
             const errMessage = err.message.replace(asset.id, asset.name);
@@ -111,10 +93,9 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
             name="amount"
             render={({field, form}: FieldProps<DepositCreditCardModel>) => (
               <div
-                className={classNames(
-                  'form-group inline-form',
-                  form.errors[field.name] && 'has-error'
-                )}
+                className={classNames('form-group inline-form', {
+                  'has-error': form.errors[field.name]
+                })}
               >
                 <div className="row">
                   <div className="col-sm-4">
@@ -128,12 +109,12 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                         {asset && asset.name}
                       </div>
                       <div className="error-bar" />
-                      {AmountInput(
-                        field.onChange,
-                        field.value,
-                        field.name,
-                        asset && asset.accuracy
-                      )}
+                      <AmountInput
+                        onChange={field.onChange}
+                        value={field.value}
+                        name={field.name}
+                        decimalLimit={asset && asset.accuracy}
+                      />
                       {form.errors[field.name] && (
                         <span className="help-block">
                           {form.errors[field.name]}
@@ -165,10 +146,9 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                 name="firstName"
                 render={({field, form}: FieldProps<DepositCreditCardModel>) => (
                   <div
-                    className={classNames(
-                      'form-group',
-                      form.errors[field.name] && 'has-error'
-                    )}
+                    className={classNames('form-group', {
+                      'has-error': form.errors[field.name]
+                    })}
                   >
                     <label htmlFor={field.name} className="control-label">
                       First Name
@@ -195,10 +175,9 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                 name="lastName"
                 render={({field, form}: FieldProps<DepositCreditCardModel>) => (
                   <div
-                    className={classNames(
-                      'form-group',
-                      form.errors[field.name] && 'has-error'
-                    )}
+                    className={classNames('form-group', {
+                      'has-error': form.errors[field.name]
+                    })}
                   >
                     <label htmlFor={field.name} className="control-label">
                       Last Name
@@ -227,10 +206,9 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                 name="country"
                 render={({field, form}: FieldProps<DepositCreditCardModel>) => (
                   <div
-                    className={classNames(
-                      'form-group',
-                      form.errors[field.name] && 'has-error'
-                    )}
+                    className={classNames('form-group', {
+                      'has-error': form.errors[field.name]
+                    })}
                   >
                     <label htmlFor={field.name} className="control-label">
                       Country
@@ -254,10 +232,9 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                 name="city"
                 render={({field, form}: FieldProps<DepositCreditCardModel>) => (
                   <div
-                    className={classNames(
-                      'form-group',
-                      form.errors[field.name] && 'has-error'
-                    )}
+                    className={classNames('form-group', {
+                      'has-error': form.errors[field.name]
+                    })}
                   >
                     <label htmlFor={field.name} className="control-label">
                       City
@@ -284,10 +261,9 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                 name="zip"
                 render={({field, form}: FieldProps<DepositCreditCardModel>) => (
                   <div
-                    className={classNames(
-                      'form-group',
-                      form.errors[field.name] && 'has-error'
-                    )}
+                    className={classNames('form-group', {
+                      'has-error': form.errors[field.name]
+                    })}
                   >
                     <label htmlFor={field.name} className="control-label">
                       ZIP
@@ -316,10 +292,9 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                 name="address"
                 render={({field, form}: FieldProps<DepositCreditCardModel>) => (
                   <div
-                    className={classNames(
-                      'form-group',
-                      form.errors[field.name] && 'has-error'
-                    )}
+                    className={classNames('form-group', {
+                      'has-error': form.errors[field.name]
+                    })}
                   >
                     <label htmlFor={field.name} className="control-label">
                       Address
@@ -348,10 +323,9 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                 name="phone"
                 render={({field, form}: FieldProps<DepositCreditCardModel>) => (
                   <div
-                    className={classNames(
-                      'form-group',
-                      form.errors[field.name] && 'has-error'
-                    )}
+                    className={classNames('form-group', {
+                      'has-error': form.errors[field.name]
+                    })}
                   >
                     <label htmlFor={field.name} className="control-label">
                       Phone Number
@@ -379,10 +353,9 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
                 name="email"
                 render={({field, form}: FieldProps<DepositCreditCardModel>) => (
                   <div
-                    className={classNames(
-                      'form-group',
-                      form.errors[field.name] && 'has-error'
-                    )}
+                    className={classNames('form-group', {
+                      'has-error': form.errors[field.name]
+                    })}
                   >
                     <label htmlFor={field.name} className="control-label">
                       E-mail
@@ -413,10 +386,9 @@ export const DepositCreditCardForm: React.SFC<DepositCreditCardFormProps> = ({
           </div>
 
           <div
-            className={classNames(
-              'deposit-credit-card-form__actions',
-              formikBag.status && 'has-error'
-            )}
+            className={classNames('deposit-credit-card-form__actions', {
+              'has-error': formikBag.status
+            })}
           >
             <input
               type="submit"
