@@ -7,6 +7,7 @@ export class UiStore {
   @observable showWalletDrawer: boolean = false;
   @observable showEditWalletDrawer: boolean = false;
   @observable showConfirmRegenerateKey: boolean = false;
+  @observable showConfirmDeleteWallet: boolean = false;
   @observable showQrWindow: boolean;
   @observable showSidebar: boolean;
   @observable showBaseCurrencyPicker: boolean;
@@ -30,9 +31,15 @@ export class UiStore {
       this.showWalletDrawer ||
       this.showEditWalletDrawer ||
       this.showConfirmRegenerateKey ||
+      this.showConfirmDeleteWallet ||
       this.showQrWindow ||
       this.showSidebar
     );
+  }
+
+  @computed
+  get drawerOverlayed() {
+    return this.showConfirmDeleteWallet;
   }
 
   constructor(rootStore: RootStore) {
@@ -64,6 +71,10 @@ export class UiStore {
 
   readonly toggleConfirmRegenerateKey = () => {
     this.showConfirmRegenerateKey = !this.showConfirmRegenerateKey;
+  };
+
+  readonly toggleConfirmDeleteWallet = () => {
+    this.showConfirmDeleteWallet = !this.showConfirmDeleteWallet;
   };
 
   readonly toggleQrWindow = () => (this.showQrWindow = !this.showQrWindow);

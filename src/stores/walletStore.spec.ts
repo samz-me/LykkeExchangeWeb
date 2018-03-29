@@ -6,7 +6,8 @@ const mockConverter = {
   convertToBaseCurrency: jest.fn(() => ({Converted: [{To: {Amount: 1}}]}))
 };
 const mockWalletApi = {
-  createApiWallet: jest.fn((name: string) => name)
+  createApiWallet: jest.fn((name: string) => name),
+  deleteWallet: jest.fn()
 };
 const walletStore = new WalletStore(
   rootStore,
@@ -40,6 +41,16 @@ describe('wallet store', () => {
       walletStore.createWallet({Name: '-foo'})
     );
     expect(wallets).toContainEqual(wallet);
+  });
+
+  it('should remove wallet from store on delete', async () => {
+    const {wallets} = walletStore;
+    const wallet = await walletStore.createApiWallet(
+      walletStore.createWallet({Name: 'bar'})
+    );
+    expect(wallets).toContainEqual(wallet);
+    await walletStore.deleteWallet(wallet);
+    expect(wallets).not.toContainEqual(wallet);
   });
 
   describe('allWalletsExceptOne', () => {

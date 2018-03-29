@@ -32,6 +32,8 @@ export class RestWalletApi extends RestApi implements WalletApi {
       Description: wallet.desc,
       Name: wallet.title
     });
+
+  deleteWallet = (wallet: WalletModel) => this.delete(`/wallets/${wallet.id}`);
 }
 
 export default RestWalletApi;

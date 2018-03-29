@@ -1,0 +1,25 @@
+@import '../../styles/utils';
+
+.confirm-delete-wallet.modal {
+  .modal__content {
+    width: 369px;
+
+    @media (max-width: $screen-mobile) {
+      width: inherit;
+    }
+
+    .modal__body {
+      @include rem(padding, 41px 29px 23px 40px);
+
+      .modal__actions {
+        .btn {
+          width: 96.666667%;
+
+          @media (max-width: $screen-mobile) {
+            width: inherit;
+          }
+        }
+      }
+    }
+  }
+}
