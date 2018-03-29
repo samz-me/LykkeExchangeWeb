@@ -20,6 +20,7 @@ const mockConverter = jest.fn(() =>
 const MockApi = jest.fn<WalletApi>(() => ({
   create: jest.fn(),
   createApiWallet: jest.fn(),
+  deleteWallet: jest.fn(),
   fetchAll: jest.fn(),
   fetchBalanceById: jest.fn()
 }));
@@ -48,6 +49,15 @@ describe('wallet model', () => {
   test('total balance in base currency should be defined', () => {
     const w = walletStore.createWallet({Id: 44, Name: 'w'});
     expect(w.totalBalance).toBeDefined();
+  });
+
+  it('should remove wallet from store on delete', async () => {
+    const {wallets} = walletStore;
+    const wallet = walletStore.createWallet({Name: 'bar'});
+    walletStore.addWallet(wallet);
+    expect(wallets).toContainEqual(wallet);
+    await walletStore.deleteWallet(wallet);
+    expect(wallets).not.toContainEqual(wallet);
   });
 
   describe('set balances', () => {

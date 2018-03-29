@@ -3837,9 +3837,9 @@ lru-cache@^4.0.1:
     pseudomap "^1.0.2"
     yallist "^2.1.2"
 
-lykke-react-components@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/lykke-react-components/-/lykke-react-components-0.1.8.tgz#4768aa0b01cd2230398bb3adf55b5ddeda7cd9a2"
+lykke-react-components@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/lykke-react-components/-/lykke-react-components-0.1.9.tgz#93e67e1e9cf732bea0ed20f64509e00cc572c222"
 
 macaddress@^0.2.8:
   version "0.2.8"

@@ -54,6 +54,17 @@
     }
   }
 
+  &__action {
+    color: $gray-dark;
+    line-height: 1.5;
+
+    img {
+      position: relative;
+      bottom: 1px;
+      right: 10px;
+    }
+  }
+
   &__content {
     overflow: auto;
     position: absolute;
@@ -159,6 +170,20 @@
 
     .drawer__body {
       @include animation(slideIn 0.3s ease 0.05s forwards);
+    }
+  }
+
+  &--overlayed {
+    filter: blur(5px);
+
+    &:after {
+      position: absolute;
+      content: '';
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: rgba($gray-25, 0.5);
     }
   }
 

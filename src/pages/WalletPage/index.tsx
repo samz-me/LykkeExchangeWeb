@@ -42,7 +42,11 @@ export class WalletPage extends React.Component<RootStoreProps> {
           path={`${ROUTE_WALLETS}/:type`}
           component={WalletList}
         />
-        <Drawer title="New API Wallet" show={this.uiStore.showWalletDrawer}>
+        <Drawer
+          title="New API Wallet"
+          show={this.uiStore.showWalletDrawer}
+          overlayed={this.uiStore.drawerOverlayed}
+        >
           <div className="drawer__title">
             <h2>New Wallet</h2>
             <h3>API Wallet</h3>

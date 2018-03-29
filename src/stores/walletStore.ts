@@ -69,6 +69,15 @@ export class WalletStore {
     }
   };
 
+  @action
+  removeWallet = (wallet: WalletModel) => {
+    const index = this.wallets.indexOf(wallet);
+
+    if (index > -1) {
+      this.wallets.splice(index, 1);
+    }
+  };
+
   createApiWallet = async (wallet: WalletModel) => {
     const {title, desc} = wallet;
     const dto = await this.api!.createApiWallet(title, desc);
@@ -133,6 +142,11 @@ export class WalletStore {
   };
 
   updateWallet = (wallet: WalletModel) => this.api!.updateWallet(wallet);
+
+  deleteWallet = async (wallet: WalletModel) => {
+    await this.api!.deleteWallet(wallet);
+    this.removeWallet(wallet);
+  };
 }
 
 export default WalletStore;

@@ -127,6 +127,15 @@ export class WalletModel {
       this.updating = false;
     }
   };
+
+  delete = async () => {
+    try {
+      await this.store.deleteWallet(this);
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  };
 }
 
 export default WalletModel;
