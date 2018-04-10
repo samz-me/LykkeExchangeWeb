@@ -107,6 +107,6 @@ describe('moneyFloor', () => {
   });
 
   it('should avoid Floating-Point issue', () => {
-    expect(moneyFloor(0.1 + 0.2)).toBe(0.3);
+    expect(moneyFloor(0.999999999)).toBe(1);
   });
 });

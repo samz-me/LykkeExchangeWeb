@@ -28,7 +28,7 @@ export const formatWithAccuracy = (accuracy: number) => {
 };
 
 export const moneyCeil = (value: number, accuracy = 2) => {
-  const SAFE_ACCURACY = accuracy + 4;
+  const SAFE_ACCURACY = accuracy >= 6 ? accuracy + 1 : accuracy + 4;
 
   return (
     Math.ceil(Number(value.toFixed(SAFE_ACCURACY)) * Math.pow(10, accuracy)) /
@@ -37,7 +37,7 @@ export const moneyCeil = (value: number, accuracy = 2) => {
 };
 
 export const moneyFloor = (value: number, accuracy = 2) => {
-  const SAFE_ACCURACY = accuracy + 4;
+  const SAFE_ACCURACY = accuracy >= 6 ? accuracy + 1 : accuracy + 4;
 
   return (
     Math.floor(Number(value.toFixed(SAFE_ACCURACY)) * Math.pow(10, accuracy)) /
