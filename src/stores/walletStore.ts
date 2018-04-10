@@ -117,9 +117,11 @@ export class WalletStore {
     this.walletsWithAssets.forEach(async wallet => {
       runInAction(() => {
         wallet.balances.forEach(b => {
-          b.balanceInBaseAsset = this.rootStore.assetStore.convert(
-            b,
-            baseAssetAsModel!
+          b.balanceInBaseAsset = this.rootStore.marketService.convert(
+            b.balance,
+            b.assetId,
+            baseAssetAsModel!.id,
+            this.rootStore.assetStore.getInstrumentById
           );
         });
       });

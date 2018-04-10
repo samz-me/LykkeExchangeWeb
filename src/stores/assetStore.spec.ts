@@ -1,5 +1,4 @@
 import {AssetStore, RootStore} from '.';
-import {BalanceModel} from '../models';
 
 const mockApi = {
   fetchAssetInstruments: () => ({
@@ -156,9 +155,9 @@ describe('Asset Store', () => {
     await assetStore.fetchInstruments();
     expect(assetStore.instruments.length).toBeGreaterThan(0);
     expect(assetStore.instruments[0].accuracy).toBe(3);
-    expect(assetStore.instruments[0].askPrice).toBeUndefined();
+    expect(assetStore.instruments[0].ask).toBeUndefined();
     expect(assetStore.instruments[0].baseAsset).toBe(assetStore.getById('BTC'));
-    expect(assetStore.instruments[0].bidPrice).toBeUndefined();
+    expect(assetStore.instruments[0].bid).toBeUndefined();
     expect(assetStore.instruments[0].id).toBe('BTCUSD');
     expect(assetStore.instruments[0].invertedAccuracy).toBe(8);
     expect(assetStore.instruments[0].name).toBe('BTC/USD');
@@ -166,52 +165,7 @@ describe('Asset Store', () => {
       assetStore.getById('USD')
     );
     await assetStore.fetchRates();
-    expect(assetStore.instruments[0].askPrice).toBe(7000);
-    expect(assetStore.instruments[0].bidPrice).toBe(6000);
-  });
-
-  it('should convert A -> B', () => {
-    const balance = new BalanceModel(rootStore.balanceStore);
-    balance.asset = assetStore.getById('BTC')!;
-    balance.assetId = 'BTC';
-    balance.balance = 1;
-
-    expect(assetStore.convert(balance, assetStore.getById('USD')!)).toBe(6000);
-  });
-
-  it('should convert B -> A', () => {
-    const balance = new BalanceModel(rootStore.balanceStore);
-    balance.asset = assetStore.getById('USD')!;
-    balance.assetId = 'USD';
-    balance.balance = 7000;
-
-    expect(assetStore.convert(balance, assetStore.getById('BTC')!)).toBe(1);
-  });
-
-  it('should convert A -> B -> C', () => {
-    const balance = new BalanceModel(rootStore.balanceStore);
-    balance.asset = assetStore.getById('BTC')!;
-    balance.assetId = 'BTC';
-    balance.balance = 1;
-
-    expect(assetStore.convert(balance, assetStore.getById('CHF')!)).toBe(9000);
-  });
-
-  it('should convert C -> B -> A', () => {
-    const balance = new BalanceModel(rootStore.balanceStore);
-    balance.asset = assetStore.getById('CHF')!;
-    balance.assetId = 'CHF';
-    balance.balance = 14000;
-
-    expect(assetStore.convert(balance, assetStore.getById('BTC')!)).toBe(1);
-  });
-
-  it('should return 0 when convert path not found', () => {
-    const balance = new BalanceModel(rootStore.balanceStore);
-    balance.asset = assetStore.getById('BTC')!;
-    balance.assetId = 'BTC';
-    balance.balance = 1;
-
-    expect(assetStore.convert(balance, assetStore.getById('ETH')!)).toBe(0);
+    expect(assetStore.instruments[0].ask).toBe(7000);
+    expect(assetStore.instruments[0].bid).toBe(6000);
   });
 });

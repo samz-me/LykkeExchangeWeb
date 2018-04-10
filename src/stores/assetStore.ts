@@ -1,6 +1,6 @@
 import {computed, observable, runInAction} from 'mobx';
 import {AssetApi} from '../api/assetApi';
-import {AssetModel, BalanceModel, InstrumentModel} from '../models/index';
+import {AssetModel, InstrumentModel} from '../models/index';
 import {RootStore} from './index';
 
 export class AssetStore {
@@ -82,62 +82,9 @@ export class AssetStore {
     resp.AssetPairRates.forEach(({AssetPair, BidPrice, AskPrice}: any) => {
       const instrument = this.getInstrumentById(AssetPair);
       if (instrument) {
-        instrument.askPrice = AskPrice;
-        instrument.bidPrice = BidPrice;
+        instrument.ask = AskPrice;
+        instrument.bid = BidPrice;
       }
     });
-  };
-
-  convert = (from: BalanceModel, to: AssetModel) => {
-    const isSuitable = (base: AssetModel, quote: AssetModel) => (
-      i: InstrumentModel
-    ) =>
-      i.baseAsset &&
-      i.quoteAsset &&
-      ((i.baseAsset.id === base.id && i.quoteAsset.id === quote.id) ||
-        (i.baseAsset.id === quote.id && i.quoteAsset.id === base.id));
-    const calc = (amount: number, base: AssetModel, i: InstrumentModel) => {
-      if (i.askPrice === 0) {
-        return 0;
-      }
-      return i.baseAsset.id === base.id
-        ? amount * i.bidPrice
-        : amount * (1 / i.askPrice);
-    };
-
-    if (from.assetId === to.id) {
-      return from.balance;
-    }
-
-    const instrument = this.instruments.find(isSuitable(from.asset, to));
-
-    let result = 0;
-    if (!!instrument) {
-      result = calc(from.balance, from.asset, instrument);
-    } else {
-      this.assets.forEach(a => {
-        if (result === 0) {
-          const instrumentFrom = this.instruments.find(
-            isSuitable(from.asset, a)
-          );
-          const instrumentTo = this.instruments.find(isSuitable(a, to));
-
-          if (
-            !!instrumentFrom &&
-            !!instrumentTo &&
-            instrumentFrom.id !== 'no_use' &&
-            instrumentTo.id !== 'no_use'
-          ) {
-            result = calc(
-              calc(from.balance, from.asset, instrumentFrom),
-              a,
-              instrumentTo
-            );
-          }
-        }
-      });
-    }
-
-    return result;
   };
 }
