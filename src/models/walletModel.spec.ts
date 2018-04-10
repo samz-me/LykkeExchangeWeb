@@ -88,7 +88,7 @@ describe('wallet model', () => {
     });
 
     it('should collapse all the rest wallets when expanding curr one', () => {
-      for (let i = 0; i < 5; i++) {
+      for (let i = 1; i < 5; i++) {
         walletStore.addWallet(walletStore.createWallet({Id: i, Name: `w${i}`}));
       }
       const currWallet = walletStore.wallets[3];
