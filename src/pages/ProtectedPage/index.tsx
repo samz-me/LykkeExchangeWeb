@@ -68,6 +68,8 @@ export class ProtectedPage extends React.Component<
       .then(() => this.appSettingsStore.fetchSettings())
       .then(() => this.appSettingsStore.fetchCountryCodes())
       .then(() => this.assetStore.fetchAssets())
+      .then(() => this.assetStore.fetchInstruments())
+      .then(() => this.assetStore.fetchRates())
       .then(() => this.profileStore.fetchUserInfo())
       .then(() => this.walletStore.fetchWallets())
       .then(() => this.profileStore.fetchBaseAsset())

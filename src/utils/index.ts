@@ -27,11 +27,20 @@ export const formatWithAccuracy = (accuracy: number) => {
   return `0,0.[${new Array(accuracy).fill('0').join('')}]`;
 };
 
-export const roundMoney = (value: number, accuracy = 2) => {
+export const moneyCeil = (value: number, accuracy = 2) => {
   const SAFE_ACCURACY = accuracy + 4;
 
   return (
     Math.ceil(Number(value.toFixed(SAFE_ACCURACY)) * Math.pow(10, accuracy)) /
+    Math.pow(10, accuracy)
+  );
+};
+
+export const moneyFloor = (value: number, accuracy = 2) => {
+  const SAFE_ACCURACY = accuracy + 4;
+
+  return (
+    Math.floor(Number(value.toFixed(SAFE_ACCURACY)) * Math.pow(10, accuracy)) /
     Math.pow(10, accuracy)
   );
 };

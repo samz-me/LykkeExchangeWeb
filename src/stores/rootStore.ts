@@ -15,7 +15,6 @@ import {
   AssetApi,
   AuthApi,
   BalanceApi,
-  ConverterApi,
   DepositCreditCardApi,
   ProfileApi,
   TransferApi,
@@ -38,25 +37,15 @@ export class RootStore {
   assetStore: AssetStore;
   depositCreditCardStore: DepositCreditCardStore;
 
-  converter = new ConverterApi(this);
-
   constructor() {
     this.affiliateStore = new AffiliateStore(this, new RestAffiliateApi(this));
     this.assetStore = new AssetStore(this, new AssetApi(this));
     this.authStore = new AuthStore(this, new AuthApi(this));
-    this.walletStore = new WalletStore(
-      this,
-      new WalletApi(this),
-      this.converter
-    );
+    this.walletStore = new WalletStore(this, new WalletApi(this));
     this.balanceStore = new BalanceStore(this, new BalanceApi(this));
     this.featureStore = new FeatureStore(new RestFeaturesApi(this));
     this.uiStore = new UiStore(this);
-    this.transferStore = new TransferStore(
-      this,
-      new TransferApi(this),
-      this.converter
-    );
+    this.transferStore = new TransferStore(this, new TransferApi(this));
     this.profileStore = new ProfileStore(this, new ProfileApi(this));
     this.depositCreditCardStore = new DepositCreditCardStore(
       this,
@@ -69,18 +58,10 @@ export class RootStore {
   }
 
   reset() {
-    this.walletStore = new WalletStore(
-      this,
-      new WalletApi(this),
-      this.converter
-    );
+    this.walletStore = new WalletStore(this, new WalletApi(this));
     this.balanceStore = new BalanceStore(this, new BalanceApi(this));
     this.uiStore = new UiStore(this);
-    this.transferStore = new TransferStore(
-      this,
-      new TransferApi(this),
-      this.converter
-    );
+    this.transferStore = new TransferStore(this, new TransferApi(this));
     this.profileStore = new ProfileStore(this, new ProfileApi(this));
     this.depositCreditCardStore = new DepositCreditCardStore(
       this,

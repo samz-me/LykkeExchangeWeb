@@ -6,6 +6,7 @@ import {RootStoreProps} from '../../App';
 import {ROUTE_WALLETS} from '../../constants/routes';
 import {STORE_ROOT} from '../../constants/stores';
 import {TransferModel, WalletModel, WalletType} from '../../models';
+import {moneyFloor} from '../../utils';
 import {AmountInput} from '../AmountInput';
 import {asAssetBalance} from '../hoc/assetBalance';
 
@@ -285,7 +286,10 @@ export const TransferForm: React.SFC<TransferFormProps> = ({
                 {!!baseAssetAsModel &&
                   asAssetBalance(
                     baseAssetAsModel,
-                    transfer.amountInBaseCurrency
+                    moneyFloor(
+                      transfer.amountInBaseCurrency,
+                      baseAssetAsModel.accuracy
+                    )
                   )}{' '}
                 {!!baseAssetAsModel && baseAssetAsModel.name}
               </div>
