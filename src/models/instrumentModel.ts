@@ -7,8 +7,8 @@ export class InstrumentModel {
   quoteAsset: AssetModel;
   accuracy: number;
   invertedAccuracy: number;
-  bidPrice: number;
-  askPrice: number;
+  bid: number;
+  ask: number;
 
   constructor(asset: Partial<InstrumentModel>) {
     Object.assign(this, asset);

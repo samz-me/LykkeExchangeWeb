@@ -46,18 +46,18 @@ export class TransferStore {
     this.api.fetchOperationDetails(transfer);
 
   convertToBaseCurrency = (transfer: TransferModel) => {
-    const baseCurrency = this.rootStore.profileStore.baseAssetAsModel!;
+    const baseCurrency = this.rootStore.profileStore.baseAsset;
 
     if (!transfer.asset || !transfer.amount) {
       return 0;
     }
 
-    const balance = this.rootStore.balanceStore.createBalance();
-    balance.balance = transfer.amount;
-    balance.asset = transfer.asset;
-    balance.assetId = transfer.asset.id;
-
-    return this.rootStore.assetStore.convert(balance, baseCurrency);
+    return this.rootStore.marketService.convert(
+      transfer.amount,
+      transfer.asset.id,
+      baseCurrency,
+      this.rootStore.assetStore.getInstrumentById
+    );
   };
 }
 
