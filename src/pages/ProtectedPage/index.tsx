@@ -84,7 +84,10 @@ export class ProtectedPage extends React.Component<
 
     this.unlistenRouteChange = this.props.history.listen(() => {
       this.uiStore.startRequest();
-      this.walletStore.fetchWallets().then(() => this.uiStore.finishRequest());
+      this.walletStore
+        .fetchWallets()
+        .then(() => this.assetStore.fetchRates())
+        .then(() => this.uiStore.finishRequest());
     });
   }
 

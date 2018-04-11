@@ -21,6 +21,7 @@ export const TransferForm: React.SFC<TransferFormProps> = ({
   onTransfer = () => null
 }) => {
   const {
+    assetStore: {fetchRates},
     transferStore: {newTransfer: transfer},
     walletStore,
     uiStore,
@@ -52,6 +53,7 @@ export const TransferForm: React.SFC<TransferFormProps> = ({
     if (!option) {
       return;
     }
+    fetchRates();
     transfer.setAsset(option.asset);
   };
 
