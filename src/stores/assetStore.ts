@@ -62,17 +62,26 @@ export class AssetStore {
   fetchInstruments = async () => {
     const resp = await this.api.fetchAssetInstruments();
     runInAction(() => {
-      this.instruments = resp.AssetPairs.map(
-        (ap: any) =>
-          new InstrumentModel({
-            accuracy: ap.Accuracy,
-            baseAsset: this.getById(ap.BaseAssetId),
-            id: ap.Id,
-            invertedAccuracy: ap.InvertedAccuracy,
-            name: ap.Name,
-            quoteAsset: this.getById(ap.QuotingAssetId)
-          })
-      );
+      this.instruments = resp.AssetPairs
+        .map(
+          (ap: any) =>
+            new InstrumentModel({
+              accuracy: ap.Accuracy,
+              baseAsset: this.getById(ap.BaseAssetId),
+              id: ap.Id,
+              invertedAccuracy: ap.InvertedAccuracy,
+              name: ap.Name,
+              quoteAsset: this.getById(ap.QuotingAssetId)
+            })
+        )
+        .filter(
+          (instrument: InstrumentModel, key: number, arr: InstrumentModel[]) =>
+            arr.find(
+              obj =>
+                obj.baseAsset === instrument.baseAsset &&
+                obj.quoteAsset === instrument.quoteAsset
+            ) === instrument
+        );
     });
   };
 
