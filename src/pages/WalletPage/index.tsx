@@ -18,11 +18,13 @@ import {WalletModel} from '../../models';
 type FormEventHandler<T = HTMLInputElement> = React.FormEventHandler<T>;
 
 export class WalletPage extends React.Component<RootStoreProps> {
+  private readonly assetStore = this.props.rootStore!.assetStore;
   private readonly walletStore = this.props.rootStore!.walletStore;
   private readonly uiStore = this.props.rootStore!.uiStore;
   private readonly transferStore = this.props.rootStore!.transferStore;
   private readonly depositCreditCardStore = this.props.rootStore!
     .depositCreditCardStore;
+  private ratesUpdateInterval: number;
 
   @observable private wallet = new WalletModel(this.walletStore);
   @observable private activeStep = 1;
@@ -34,7 +36,16 @@ export class WalletPage extends React.Component<RootStoreProps> {
   }
 
   componentDidMount() {
+    this.ratesUpdateInterval = window.setInterval(() => {
+      this.assetStore
+        .fetchRates()
+        .then(() => this.walletStore.convertBalances());
+    }, 60 * 1000);
     window.scrollTo(0, 0);
+  }
+
+  componentWillUnmount() {
+    window.clearInterval(this.ratesUpdateInterval);
   }
 
   render() {
