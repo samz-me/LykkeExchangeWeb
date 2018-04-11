@@ -3,7 +3,7 @@ import * as React from 'react';
 import {RootStoreProps} from '../../App';
 import {STORE_ROOT} from '../../constants/stores';
 import {WalletModel} from '../../models';
-// import {NumberFormat} from '../NumberFormat';
+import {moneyFloor} from '../../utils';
 import {asAssetBalance} from '../hoc/assetBalance';
 
 interface WalletTotalBalanceProps extends RootStoreProps {
@@ -21,13 +21,15 @@ export const WalletTotalBalance: React.SFC<WalletTotalBalanceProps> = ({
         <span>
           {asAssetBalance(
             rootStore!.profileStore.baseAssetAsModel!,
-            wallet.totalBalance
+            moneyFloor(
+              wallet.totalBalance,
+              rootStore!.profileStore.baseAssetAsModel!.accuracy
+            )
           )}
           &nbsp;
           {rootStore!.profileStore.baseAssetAsModel!.name}
         </span>
       )}
-      {/* <NumberFormat value={wallet.totalBalance} />{' '} */}
     </h3>
   </div>
 );
